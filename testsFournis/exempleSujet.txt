@@ -1,0 +1,40 @@
+Durand 8 HEURES DEBUT 5 ADULTE 5 ENFANT,
+Dupont 8 HEURES DEBUT 2 ADULTE 1 ENFANT,
+Dupont 13 HEURES FIN,
+Durand 18 HEURES FIN,
+Legros 18 HEURES DEBUT 20 ADULTE 10 ENFANT , 
+Legros 19 HEURES FIN;	/
+
+Commentaire : exemple du sujet
+##############################
+Une seule journée, trois clients qui louent et rendent une seule fois chacun
+       Dupont 10 euros par heure pendant 5 heures = 50 euros
+       Durand 30 euros par heure pendant 10 heures = 300 euros
+       Legros 100 euros par heure pendant 1 heure = 100 euros
+
+Résultat attendu
+################
+
+nom du fichier d'entrée : testsFournis/exempleSujet.txt
+Le client:  DUPONT  doit payer : 50 euros pour 2 vélo(s) adulte et 1 vélo(s) enfant 
+Le client:  DURAND  doit payer : 300 euros pour 5 vélo(s) adulte et 5 vélo(s) enfant 
+Le client:  LEGROS  doit payer : 100 euros pour 20 vélo(s) adulte et 10 vélo(s) enfant 
+********************************************************************************
+BILAN DU JOUR  1
+
+      CLIENT      JOUR    HEURE_DEBUT  ADULTE    ENFANT
+---------------    ----      ---       ---       ---     
+**************************** BILAN FINAL ***************************************
+Nombre de vélos adulte manquants :  0
+Nombre de vélos enfant manquants :  0
+Opérations correctes : 6 - Nombre total d'opérations : 6
+
+Voici les clients qui doivent encore rendre des vélos
+
+      CLIENT      JOUR    HEURE_DEBUT  ADULTE    ENFANT
+---------------    ----      ---       ---       ---     
+**************************** BILAN AFFLUENCE ***********************************
+Le jour de plus grande affluence est : 1  avec 3 clients servis
+
+
+Fin d'analyse. La fenêtre graphique est encore active, pour continuer tapez entrée 
