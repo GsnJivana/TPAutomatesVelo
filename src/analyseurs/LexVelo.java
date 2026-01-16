@@ -1,3 +1,7 @@
+// NGO Hoang Duc Huy 
+// GNANSOUNOU Jivana
+// PECCI Noé
+
 package analyseurs;
 
 import libIO.*;
@@ -117,6 +121,7 @@ public class LexVelo extends Lex {
 	 * @return chaîne correspondant à numIdent
 	 */
 	public final String chaineIdent(int numIdent) {
+		// On vérifie que numIdent est bien un identificateur
 		if (numIdent >= NBRES && numIdent < tabIdent.size()) {
 			return tabIdent.get(numIdent);
 		}
@@ -140,6 +145,7 @@ public class LexVelo extends Lex {
 	}
 
 	private int lireIdent() {
+		// Lecture du mot (suite de lettres)
 		String s = "";
 		do {
 			s = s + getCarLu();
@@ -155,7 +161,7 @@ public class LexVelo extends Lex {
 		}
 
 		// Si ce n'est pas un mot réservé, c'est un identificateur
-		// Vérification si l'identificateur existe déjà dans la table
+		// On vérifie si l'identificateur existe déjà dans la table
 		for (int i = NBRES; i < tabIdent.size(); i++) {
 			if (s.equals(tabIdent.get(i))) {
 				numIdCourant = i;
@@ -163,7 +169,7 @@ public class LexVelo extends Lex {
 			}
 		}
 
-		// Nouvel identificateur, on l'ajoute à la table
+		// C'est un nouvel identificateur donc on l'ajoute à la table
 		tabIdent.add(s);
 		numIdCourant = tabIdent.size() - 1;
 		return IDENT;
