@@ -76,8 +76,38 @@ public class LexVelo extends Lex {
 	 */
 	@Override
 	public final int lireSymb() {
-		// TODO
-		throw new UnsupportedOperationException("méthode lireSymb à implémenter");
+
+		// On ignore les espaces et assimilés.
+		while (getCarLu() == ' ') {
+			lireCarLu();
+		}
+
+		// On détecte le début de l'item lexical IDENT
+		if ((getCarLu() >= '0') && (getCarLu() <= '9')) {
+			return lireEnt();
+		}
+
+		// On détecte le début de l'item lexical IDENT
+		if ((getCarLu() >= 'a') && (getCarLu() <= 'z') ||
+				(getCarLu() >= 'A') && (getCarLu() <= 'Z')) {
+			return lireIdent();
+		}
+
+		// On détecte un autre item lexical
+		switch (getCarLu()) {
+			case ',':
+				lireCarLu();
+				return VIRG;
+			case ';':
+				lireCarLu();
+				return PTVIRG;
+			case '/':
+				return BARRE;
+			default:
+				System.out.println("Caractère incorrect");
+				lireCarLu();
+				return AUTRES;
+		}
 	}
 
 	/**
@@ -87,8 +117,56 @@ public class LexVelo extends Lex {
 	 * @return chaîne correspondant à numIdent
 	 */
 	public final String chaineIdent(int numIdent) {
-		// TODO
-		throw new UnsupportedOperationException("méthode chaineIdent à imlémenter");
+		if (numIdent >= NBRES && numIdent < tabIdent.size()) {
+			return tabIdent.get(numIdent);
+		}
+		return "";
+	}
+
+	/**
+	 * Lecture d'un item NBENTIER
+	 * et mise à jour de l'attribut lexical valEnt.
+	 * 
+	 * @return code NBENTIER
+	 */
+	private int lireEnt() {
+		String s = "";
+		do {
+			s = s + getCarLu();
+			lireCarLu();
+		} while ((getCarLu() >= '0') && (getCarLu() <= '9'));
+		valEnt = Integer.parseInt(s);
+		return NBENTIER;
+	}
+
+	private int lireIdent() {
+		String s = "";
+		do {
+			s = s + getCarLu();
+			lireCarLu();
+		} while ((getCarLu() >= 'a') && (getCarLu() <= 'z') ||
+				(getCarLu() >= 'A') && (getCarLu() <= 'Z'));
+
+		// Vérification si le mot est un mot réservé
+		for (int i = 0; i < NBRES; i++) {
+			if (s.equals(images[i])) {
+				return i; // Retourne le code du mot réservé
+			}
+		}
+
+		// Si ce n'est pas un mot réservé, c'est un identificateur
+		// Vérification si l'identificateur existe déjà dans la table
+		for (int i = NBRES; i < tabIdent.size(); i++) {
+			if (s.equals(tabIdent.get(i))) {
+				numIdCourant = i;
+				return IDENT;
+			}
+		}
+
+		// Nouvel identificateur, on l'ajoute à la table
+		tabIdent.add(s);
+		numIdCourant = tabIdent.size() - 1;
+		return IDENT;
 	}
 
 	/**
