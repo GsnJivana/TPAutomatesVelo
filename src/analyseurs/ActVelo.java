@@ -14,8 +14,11 @@ import main.BaseDeLoc;
  * La classe ActVelo met en oeuvre les actions de l'automate d'analyse
  * syntaxique des locations de vélos
  * 
- * @author //TODO compléter les noms du trinôme
+ * @author
  *         janvier 2026
+ *         NGO Hoang Duc Huy
+ *         GNANSOUNOU Jivana
+ *         PECCI Noé
  */
 
 public class ActVelo extends AutoVelo {

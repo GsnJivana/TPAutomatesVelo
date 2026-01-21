@@ -1,7 +1,3 @@
-// NGO Hoang Duc Huy 
-// GNANSOUNOU Jivana
-// PECCI Noé
-
 package analyseurs;
 
 import libIO.*;
@@ -12,12 +8,14 @@ import java.util.ArrayList;
  * La classe LexVelo implémente un analyseur lexical pour une application de
  * location de velos
  * 
- * @author // TODO compléter les noms du trinôme
+ * @author
  *         janvier 2026
+ *         NGO Hoang Duc Huy
+ *         GNANSOUNOU Jivana
+ *         PECCI Noé
  */
 
 public class LexVelo extends Lex {
-	// TODO à compléter
 
 	/** Nombre de mots réservés dans l'application Velo */
 	public static final int NBRES = 5;
