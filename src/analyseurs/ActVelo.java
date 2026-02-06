@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-import libIO.*;
+//import libIO.*;
 
 import main.InfosClient;
 import main.BaseDeLoc;
@@ -22,19 +22,28 @@ import main.BaseDeLoc;
  */
 
 public class ActVelo extends AutoVelo {
-	// TODO à compléter
+	// à compléter
 
 	// Raccourci d'accès à l'analyseur lexical
 	private final LexVelo analyseurLexical = (LexVelo) this.getAnalyseurLexical();
 
 	/** Table des actions */
-	// TODO compléter la table ACTION
+	// compléter la table ACTION
 	private final int[][] ACTION = {
 			// Etat ADULTE DEBUT ENFANT FIN HEURES IDENT NBENTIER VIRG PTVIRG BARRE AUTRES
-			/* 0 */ { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 },
-			/* 1 */ { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 },
-			/* 2 */ { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 },
-			/* ... {...} */
+			/* 0 */ { 12, 12, 12, 12, 12, 1, 12, 12, 12, 11, 12 },
+			/* 1 */ { 12, 8, 12, 9, 12, 12, 2, 12, 12, 12, 12 },
+			/* 2 */ { 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12 },
+			/* 3 */ { 12, 3, 12, 4, 12, 12, 12, 12, 12, 12, 12 },
+			/* 4 */ { 12, 12, 12, 12, 12, 12, 2, 12, 12, 12, 12 },
+			/* 5 */ { 12, 12, 12, 12, 12, 12, 12, 7, 10, 12, 12 },
+			/* 6 */ { 5, 12, 6, 12, 12, 12, 12, 7, 12, 12, 12 },
+			/* 7 */ { 12, 12, 12, 12, 12, 12, 2, 12, 10, 12, 12 },
+			/* 8 */ { 12, 12, 6, 12, 12, 12, 12, 12, 12, 12, 12 },
+			/* 9 */ { 12, 12, 12, 12, 12, 12, 12, 7, 10, 12, 12 },
+			/* 10 */ { 12, 12, 12, 12, 12, 1, 12, 12, 12, 12, 12 },
+			/* 12 */ { 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12 },
+			// Action 12 associée aux transitions vers l’état erreur
 	};
 
 	/** Nombre de vélos initialement disponibles */
@@ -60,7 +69,11 @@ public class ActVelo extends AutoVelo {
 	// contenues dans la donnée à analyser
 	private int nbOperationCorrectes;
 
-	// TODO compléter la déclaration des variables nécessaires aux actions
+	// compléter la déclaration des variables nécessaires aux actions
+	private String nomC;
+	private int heureD, heureF, qteA, qteE, tmp, numIdCourant;
+	private int nbVelosAdultesLoues = 0;
+	private int nbVelosEnfantsLoues = 0;
 
 	/**
 	 * Constructeur classe ActVelo
@@ -101,8 +114,18 @@ public class ActVelo extends AutoVelo {
 		clientsParJour.add(0, new HashSet<>());
 		clientsParJour.add(1, new HashSet<>());
 
-		// TODO compléter l'initialisation des variables nécessaires aux actions
+		debutOperation();
 
+	}
+
+	private void debutOperation() {
+		heureD = -1;
+		heureF = -1;
+		qteA = 0;
+		qteE = 0;
+		tmp = 0;
+		numIdCourant = -1;
+		// ou 0 si on veut
 	}
 
 	/**
@@ -124,14 +147,149 @@ public class ActVelo extends AutoVelo {
 	private final void executer(int numAction) {
 
 		switch (numAction) {
-			case -1: // action vide
+			case 0: // action réservée à l’initialisation des variables
+				debutOperation();
 				break;
 
-			// TODO compléter les actions
-
+			case 1:
+				numIdCourant = analyseurLexical.getnumIdCourant();
+				nomC = analyseurLexical.chaineIdent(numIdCourant);
+				break;
+			case 2:
+				tmp = analyseurLexical.getvalEnt();
+				break;
+			case 3:
+				heureD = tmp;
+				break;
+			case 4:
+				heureF = tmp;
+				break;
+			case 5:
+				qteA = tmp;
+				break;
+			case 6:
+				qteE = tmp;
+				break;
+			case 7:
+				finOperation();
+				break;
+			case 8:
+				heureD = 8;
+				break;
+			case 9:
+				heureF = 19;
+				break;
+			case 10:
+				finOperation();
+				finJournee();
+				break;
+			case 11:
+				afficherBilanFinal();
+				break;
 			default:
-				Lecture.attenteSurLecture("action " + numAction + " non prévue");
+				// Lecture.attenteSurLecture("action" + numAction + " non prévue");
+				break;
 		}
+	}
+
+	private void finOperation() {
+		nbOperationTotales++;
+		if (heureD != -1) {
+			debutLocation();
+		} else {
+			finLocation();
+		}
+		debutOperation();
+	}
+
+	private void finJournee() {
+		afficherBilanJour();
+		jourCourant++;
+		clientsParJour.add(new HashSet<>());
+	}
+
+	private void debutLocation() {
+		if (maBaseDeLoc.getInfosClient(nomC) != null) {
+			System.out.println(nomC + " a déjà une location en cours");
+			return;
+		}
+
+		maBaseDeLoc.enregistrerLoc(nomC, jourCourant, heureD, qteA, qteE);
+		clientsParJour.get(jourCourant).add(numIdCourant);
+		nbVelosAdultesLoues += qteA;
+		nbVelosEnfantsLoues += qteE;
+		nbOperationCorrectes++;
+	}
+
+	private void finLocation() {
+		InfosClient infos = maBaseDeLoc.getInfosClient(nomC);
+
+		if (infos == null) {
+			System.out.println(nomC + " n'a pas de location en cours");
+			return;
+		}
+
+		int duree = calculDureeLoc(infos.jourEmprunt, infos.heureDebut,
+				jourCourant, heureF);
+		int prix = duree * (4 * infos.qteAdulte + 2 * infos.qteEnfant);
+
+		System.out.println("Le client:  " + nomC.toUpperCase() +
+				"  doit payer : " + prix +
+				" euros pour " + infos.qteAdulte +
+				" vélo(s) adulte et " + infos.qteEnfant +
+				" vélo(s) enfant ");
+
+		nbVelosAdultesLoues -= infos.qteAdulte;
+		nbVelosEnfantsLoues -= infos.qteEnfant;
+		maBaseDeLoc.supprimerClient(nomC);
+		nbOperationCorrectes++;
+	}
+
+	private void afficherBilanJour() {
+		System.out.println("****************************");
+		System.out.println("BILAN DU JOUR  " + jourCourant);
+		System.out.println();
+		maBaseDeLoc.afficherLocationsEnCours();
+	}
+
+	private void afficherBilanFinal() {
+		System.out.println("***** BILAN FINAL *****");
+
+		int adultesLoues = compterVelosAdultesLoues();
+		int enfantsLoues = compterVelosEnfantsLoues();
+
+		System.out.println("Nombre de vélos adulte manquants :  " + adultesLoues);
+		System.out.println("Nombre de vélos enfant manquants :  " + enfantsLoues);
+		System.out.println("Opérations correctes : " + nbOperationCorrectes +
+				" - Nombre total d'opérations : " + nbOperationTotales);
+		System.out.println();
+
+		System.out.println("Voici les clients qui doivent encore rendre des vélos");
+		System.out.println();
+		maBaseDeLoc.afficherLocationsEnCours();
+
+		System.out.println("******* BILAN AFFLUENCE ********");
+		int maxClients = 0;
+		int jourMax = 0;
+		for (int i = 1; i < clientsParJour.size(); i++) {
+			int nbClients = clientsParJour.get(i).size();
+			if (nbClients > maxClients) {
+				maxClients = nbClients;
+				jourMax = i;
+			}
+		}
+		System.out.println("Le jour de plus grande affluence est : " + jourMax +
+				"  avec " + maxClients + " clients servis");
+	}
+
+	private int compterVelosAdultesLoues() {
+		return nbVelosAdultesLoues;
+
+	}
+
+	private int compterVelosEnfantsLoues() {
+		return nbVelosEnfantsLoues;
+
 	}
 
 	/**
